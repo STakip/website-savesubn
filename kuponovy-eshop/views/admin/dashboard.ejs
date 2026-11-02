@@ -1,0 +1,41 @@
+<%- include('../partials/header') %>
+<%- include('../partials/adminnav') %>
+
+<h1>Přehled</h1>
+<div class="stats">
+  <div class="stat"><div class="stat-n"><%= stats.products %></div><div class="stat-l">produktů</div></div>
+  <div class="stat"><div class="stat-n"><%= stats.pending %></div><div class="stat-l">čeká na potvrzení</div></div>
+  <div class="stat"><div class="stat-n"><%= stats.delivered %></div><div class="stat-l">doručeno</div></div>
+  <div class="stat"><div class="stat-n"><%= formatPrice(stats.revenue, settings.currency) %></div><div class="stat-l">tržby (doručené)</div></div>
+</div>
+
+<div class="cols">
+  <section>
+    <h2>Nejnižší sklad</h2>
+    <table class="table">
+      <thead><tr><th>Produkt</th><th>Skladem</th></tr></thead>
+      <tbody>
+        <% lowStock.forEach(function(p){ %>
+          <tr><td><a href="/admin/products/<%= p.id %>/edit"><%= p.name %></a></td>
+          <td><span class="<%= p.stock > 0 ? 'stock in' : 'stock out' %>"><%= p.stock %></span></td></tr>
+        <% }) %>
+        <% if (lowStock.length === 0) { %><tr><td colspan="2" class="muted">Žádné produkty.</td></tr><% } %>
+      </tbody>
+    </table>
+  </section>
+  <section>
+    <h2>Poslední objednávky</h2>
+    <table class="table">
+      <thead><tr><th>Číslo</th><th>Produkt</th><th>Stav</th></tr></thead>
+      <tbody>
+        <% recent.forEach(function(o){ %>
+          <tr><td><a href="/admin/orders/<%= o.id %>"><%= o.public_id %></a></td>
+          <td><%= o.product_name %></td>
+          <td><span class="status status-<%= o.status %>"><%= o.status %></span></td></tr>
+        <% }) %>
+        <% if (recent.length === 0) { %><tr><td colspan="3" class="muted">Zatím nic.</td></tr><% } %>
+      </tbody>
+    </table>
+  </section>
+</div>
+<%- include('../partials/footer') %>

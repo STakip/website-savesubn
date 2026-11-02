@@ -1,0 +1,60 @@
+<%- include('partials/header') %>
+
+<a class="back" href="/">← zpět na produkty</a>
+
+<div class="product-detail">
+  <div class="pd-main">
+    <% if (product.image_url) { %><div class="pd-img" style="background-image:url('<%= product.image_url %>')"></div><% } %>
+    <h1><%= product.name %></h1>
+    <div class="price big"><%= formatPrice(product.price_cents, product.currency) %></div>
+    <% if (product.description) { %><p class="muted desc"><%= product.description %></p><% } %>
+    <p class="<%= stock > 0 ? 'stock in' : 'stock out' %>"><%= stock > 0 ? ('Skladem: ' + stock + ' ks') : 'Momentálně vyprodáno' %></p>
+  </div>
+
+  <div class="pd-buy card">
+    <div class="card-body">
+      <h2>Objednávka</h2>
+      <% if (stock === 0) { %>
+        <p class="muted">Produkt je vyprodaný. Zkus to prosím později.</p>
+      <% } else { %>
+      <form method="post" action="/checkout">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <input type="hidden" name="product_id" value="<%= product.id %>" />
+
+        <label>E-mail pro doručení kódu
+          <input type="email" name="email" required value="<%= user ? user.email : '' %>" placeholder="tvuj@email.cz" />
+        </label>
+
+        <label>Množství
+          <select name="quantity">
+            <% for (let i = 1; i <= maxQty; i++) { %><option value="<%= i %>"><%= i %></option><% } %>
+          </select>
+        </label>
+
+        <fieldset class="methods">
+          <legend>Způsob platby</legend>
+          <% var first = true; %>
+          <% if (stripeEnabled) { %>
+            <label class="method"><input type="radio" name="method" value="stripe" <%= first ? 'checked' : '' %> /> <span>Karta (Stripe)</span></label>
+            <% first = false; %>
+          <% } %>
+          <% if (settings.crypto_enabled === '1' && settings.crypto_address) { %>
+            <label class="method"><input type="radio" name="method" value="crypto" <%= first ? 'checked' : '' %> /> <span><%= settings.crypto_label %> — ruční potvrzení</span></label>
+            <% first = false; %>
+          <% } %>
+          <% if (settings.iban_enabled === '1' && settings.iban_number) { %>
+            <label class="method"><input type="radio" name="method" value="iban" <%= first ? 'checked' : '' %> /> <span>Bankovní převod (IBAN) — ruční potvrzení</span></label>
+            <% first = false; %>
+          <% } %>
+          <% if (first) { %><p class="muted">Není nakonfigurovaná žádná platební metoda. Nastav ji v adminu / .env.</p><% } %>
+        </fieldset>
+
+        <button class="btn btn-block" type="submit" <%= first ? 'disabled' : '' %>>Pokračovat k platbě</button>
+        <p class="muted small">Kartou dostaneš kód ihned automaticky. U krypta a převodu ti kód pošleme po ručním ověření platby.</p>
+      </form>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

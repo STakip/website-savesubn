@@ -1,0 +1,56 @@
+<%- include('../partials/header') %>
+<%- include('../partials/adminnav') %>
+
+<a class="back" href="/admin/products">← zpět na produkty</a>
+<h1><%= product ? 'Upravit produkt' : 'Nový produkt' %></h1>
+
+<form method="post" action="<%= product ? '/admin/products/' + product.id : '/admin/products' %>" class="form-card card"><div class="card-body">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+  <label>Název<input type="text" name="name" required value="<%= product ? product.name : '' %>" /></label>
+  <label>URL slug (nepovinné)<input type="text" name="slug" value="<%= product ? product.slug : '' %>" placeholder="automaticky z názvu" /></label>
+  <label>Popis<textarea name="description" rows="3"><%= product ? (product.description || '') : '' %></textarea></label>
+  <div class="form-row">
+    <label>Cena (v <%= (product ? product.currency : settings.currency).toUpperCase() %>)
+      <input type="text" name="price" required value="<%= product ? (product.price_cents / 100) : '' %>" placeholder="např. 49" /></label>
+    <label>Měna<input type="text" name="currency" value="<%= product ? product.currency : settings.currency %>" /></label>
+  </div>
+  <label>Obrázek URL (nepovinné)<input type="text" name="image_url" value="<%= product ? (product.image_url || '') : '' %>" /></label>
+  <label class="checkbox"><input type="checkbox" name="active" <%= (!product || product.active) ? 'checked' : '' %> /> Produkt je aktivní (viditelný v obchodě)</label>
+  <button class="btn" type="submit"><%= product ? 'Uložit změny' : 'Vytvořit produkt' %></button>
+</div></form>
+
+<% if (product) { %>
+  <div class="form-card card"><div class="card-body">
+    <h2>Kódy / kupóny</h2>
+    <div class="stats small-stats">
+      <div class="stat"><div class="stat-n"><%= counts.available %></div><div class="stat-l">skladem</div></div>
+      <div class="stat"><div class="stat-n"><%= counts.reserved %></div><div class="stat-l">rezervováno</div></div>
+      <div class="stat"><div class="stat-n"><%= counts.delivered %></div><div class="stat-l">doručeno</div></div>
+    </div>
+
+    <form method="post" action="/admin/products/<%= product.id %>/coupons">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <label>Vlož kódy (jeden na řádek)
+        <textarea name="codes" rows="6" placeholder="ABCD-1234-XYZ&#10;EFGH-5678-UVW"></textarea>
+      </label>
+      <button class="btn" type="submit">Přidat kódy na sklad</button>
+    </form>
+
+    <% if (sample && sample.length) { %>
+      <h3>Posledních <%= sample.length %> kódů</h3>
+      <ul class="codes small">
+        <% sample.forEach(function(c){ %><li><span class="status status-<%= c.status === 'available' ? 'pending' : (c.status === 'delivered' ? 'delivered' : 'paid') %>"><%= c.status %></span> <%= c.code %></li><% }) %>
+      </ul>
+      <form method="post" action="/admin/products/<%= product.id %>/coupons/clear-available" onsubmit="return confirm('Smazat všechny NEVYUŽITÉ kódy tohoto produktu?');">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <button class="btn btn-danger btn-sm" type="submit">Smazat nevyužité kódy</button>
+      </form>
+    <% } %>
+  </div></div>
+
+  <form method="post" action="/admin/products/<%= product.id %>/delete" onsubmit="return confirm('Opravdu smazat produkt?');" class="danger-zone">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <button class="btn btn-danger" type="submit">Smazat produkt</button>
+  </form>
+<% } %>
+<%- include('../partials/footer') %>

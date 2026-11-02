@@ -1,0 +1,13 @@
+<%- include('partials/header') %>
+<div class="auth-box card"><div class="card-body">
+  <h1>Přihlášení</h1>
+  <form method="post" action="/login">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <input type="hidden" name="next" value="<%= next %>" />
+    <label>E-mail<input type="email" name="email" required /></label>
+    <label>Heslo<input type="password" name="password" required /></label>
+    <button class="btn btn-block" type="submit">Přihlásit</button>
+  </form>
+  <p class="muted small">Nemáš účet? <a href="/register">Zaregistruj se</a></p>
+</div></div>
+<%- include('partials/footer') %>

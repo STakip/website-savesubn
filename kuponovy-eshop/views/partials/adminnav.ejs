@@ -1,0 +1,6 @@
+<nav class="admin-nav">
+  <a href="/admin" class="<%= currentPath === '/admin' ? 'active' : '' %>">Přehled</a>
+  <a href="/admin/products" class="<%= currentPath.indexOf('/admin/products') === 0 ? 'active' : '' %>">Produkty</a>
+  <a href="/admin/orders" class="<%= currentPath.indexOf('/admin/orders') === 0 ? 'active' : '' %>">Objednávky</a>
+  <a href="/admin/settings" class="<%= currentPath === '/admin/settings' ? 'active' : '' %>">Nastavení</a>
+</nav>

@@ -1,0 +1,24 @@
+<%- include('partials/header') %>
+<h1>Můj účet</h1>
+<p class="muted"><%= user.email %></p>
+
+<h2>Moje objednávky</h2>
+<% if (orders.length === 0) { %>
+  <p class="muted">Zatím žádné objednávky. <a href="/">Prohlédni produkty</a>.</p>
+<% } else { %>
+<table class="table">
+  <thead><tr><th>Číslo</th><th>Produkt</th><th>Cena</th><th>Stav</th><th></th></tr></thead>
+  <tbody>
+    <% orders.forEach(function(o){ %>
+      <tr>
+        <td><code><%= o.public_id %></code></td>
+        <td><%= o.product_name %> (<%= o.quantity %>×)</td>
+        <td><%= formatPrice(o.amount_cents, o.currency) %></td>
+        <td><span class="status status-<%= o.status %>"><%= ({pending:'Čeká',paid:'Zaplaceno',delivered:'Doručeno',cancelled:'Zrušeno'})[o.status] %></span></td>
+        <td><a href="/order/<%= o.public_id %>">detail</a></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+<% } %>
+<%- include('partials/footer') %>

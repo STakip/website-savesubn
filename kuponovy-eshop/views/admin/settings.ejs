@@ -1,0 +1,29 @@
+<%- include('../partials/header') %>
+<%- include('../partials/adminnav') %>
+
+<h1>Nastavení</h1>
+<form method="post" action="/admin/settings" class="form-card card"><div class="card-body">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+  <h2>Obchod</h2>
+  <label>Název obchodu<input type="text" name="shop_name" value="<%= settings.shop_name %>" /></label>
+  <label>Podtitul<input type="text" name="shop_tagline" value="<%= settings.shop_tagline %>" /></label>
+  <label>Kontaktní e-mail<input type="email" name="support_email" value="<%= settings.support_email %>" /></label>
+  <label>Měna (ISO, např. czk, eur, usd)<input type="text" name="currency" value="<%= settings.currency %>" /></label>
+  <label>Obchodní podmínky (krátký text v patičce)<textarea name="terms" rows="2"><%= settings.terms %></textarea></label>
+
+  <h2>Krypto platba (ruční potvrzení)</h2>
+  <label class="checkbox"><input type="checkbox" name="crypto_enabled" <%= settings.crypto_enabled === '1' ? 'checked' : '' %> /> Nabízet krypto platbu</label>
+  <label>Popisek (např. Bitcoin (BTC))<input type="text" name="crypto_label" value="<%= settings.crypto_label %>" /></label>
+  <label>Adresa peněženky<input type="text" name="crypto_address" value="<%= settings.crypto_address %>" /></label>
+
+  <h2>Bankovní převod / IBAN (ruční potvrzení)</h2>
+  <label class="checkbox"><input type="checkbox" name="iban_enabled" <%= settings.iban_enabled === '1' ? 'checked' : '' %> /> Nabízet bankovní převod</label>
+  <label>IBAN<input type="text" name="iban_number" value="<%= settings.iban_number %>" /></label>
+  <label>Majitel účtu<input type="text" name="iban_holder" value="<%= settings.iban_holder %>" /></label>
+  <label>Banka<input type="text" name="iban_bank" value="<%= settings.iban_bank %>" /></label>
+
+  <button class="btn" type="submit">Uložit nastavení</button>
+  <p class="muted small">Stripe (platba kartou) se nastavuje přes proměnné prostředí (.env) — viz README.</p>
+</div></form>
+<%- include('../partials/footer') %>

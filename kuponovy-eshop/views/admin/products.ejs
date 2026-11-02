@@ -1,0 +1,25 @@
+<%- include('../partials/header') %>
+<%- include('../partials/adminnav') %>
+
+<div class="page-head">
+  <h1>Produkty</h1>
+  <a class="btn" href="/admin/products/new">+ Nový produkt</a>
+</div>
+
+<table class="table">
+  <thead><tr><th>Název</th><th>Cena</th><th>Skladem</th><th>Prodáno</th><th>Stav</th><th></th></tr></thead>
+  <tbody>
+    <% products.forEach(function(p){ %>
+      <tr>
+        <td><a href="/admin/products/<%= p.id %>/edit"><%= p.name %></a><br><span class="muted small">/p/<%= p.slug %></span></td>
+        <td><%= formatPrice(p.price_cents, p.currency) %></td>
+        <td><span class="<%= p.available > 0 ? 'stock in' : 'stock out' %>"><%= p.available %></span></td>
+        <td><%= p.delivered %></td>
+        <td><%= p.active ? 'aktivní' : 'skrytý' %></td>
+        <td><a href="/admin/products/<%= p.id %>/edit">upravit</a></td>
+      </tr>
+    <% }) %>
+    <% if (products.length === 0) { %><tr><td colspan="6" class="muted">Žádné produkty. Vytvoř první.</td></tr><% } %>
+  </tbody>
+</table>
+<%- include('../partials/footer') %>

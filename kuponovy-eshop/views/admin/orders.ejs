@@ -1,0 +1,29 @@
+<%- include('../partials/header') %>
+<%- include('../partials/adminnav') %>
+
+<h1>Objednávky</h1>
+<div class="filters">
+  <a href="/admin/orders" class="<%= !status ? 'active' : '' %>">Vše</a>
+  <a href="/admin/orders?status=pending" class="<%= status === 'pending' ? 'active' : '' %>">Čeká</a>
+  <a href="/admin/orders?status=delivered" class="<%= status === 'delivered' ? 'active' : '' %>">Doručeno</a>
+  <a href="/admin/orders?status=cancelled" class="<%= status === 'cancelled' ? 'active' : '' %>">Zrušeno</a>
+</div>
+
+<table class="table">
+  <thead><tr><th>Číslo</th><th>Produkt</th><th>E-mail</th><th>Cena</th><th>Platba</th><th>Stav</th><th>Vytvořeno</th></tr></thead>
+  <tbody>
+    <% orders.forEach(function(o){ %>
+      <tr>
+        <td><a href="/admin/orders/<%= o.id %>"><%= o.public_id %></a></td>
+        <td><%= o.product_name %> (<%= o.quantity %>×)</td>
+        <td><%= o.email %></td>
+        <td><%= formatPrice(o.amount_cents, o.currency) %></td>
+        <td><%= o.payment_method %></td>
+        <td><span class="status status-<%= o.status %>"><%= o.status %></span></td>
+        <td class="muted small"><%= o.created_at %></td>
+      </tr>
+    <% }) %>
+    <% if (orders.length === 0) { %><tr><td colspan="7" class="muted">Žádné objednávky.</td></tr><% } %>
+  </tbody>
+</table>
+<%- include('../partials/footer') %>

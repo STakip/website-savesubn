@@ -1,0 +1,28 @@
+{
+  "name": "coupon-shop",
+  "version": "1.0.0",
+  "description": "Digitální e-shop na prodej kupónových/voucher kódů s doručením e-mailem. Stripe, krypto a IBAN (ruční potvrzení), admin panel, účty zákazníků.",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.3.0",
+    "connect-sqlite3": "^0.9.15",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.0",
+    "express-rate-limit": "^7.4.0",
+    "express-session": "^1.18.0",
+    "helmet": "^7.1.0",
+    "nanoid": "^3.3.7",
+    "nodemailer": "^6.9.15",
+    "stripe": "^16.12.0"
+  }
+}

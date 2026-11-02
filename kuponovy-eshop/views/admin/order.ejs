@@ -1,0 +1,44 @@
+<%- include('../partials/header') %>
+<%- include('../partials/adminnav') %>
+
+<a class="back" href="/admin/orders">← zpět na objednávky</a>
+<h1>Objednávka <%= order.public_id %></h1>
+
+<div class="order-summary card"><div class="card-body">
+  <div class="row"><span>Produkt</span><strong><%= order.product_name %> (<%= order.quantity %>×)</strong></div>
+  <div class="row"><span>Cena</span><strong><%= formatPrice(order.amount_cents, order.currency) %></strong></div>
+  <div class="row"><span>E-mail</span><strong><%= order.email %></strong></div>
+  <div class="row"><span>Platba</span><strong><%= order.payment_method %></strong></div>
+  <div class="row"><span>Stav</span><strong class="status status-<%= order.status %>"><%= order.status %></strong></div>
+  <div class="row"><span>Reference zákazníka</span><strong><%= order.reference || '—' %></strong></div>
+  <div class="row"><span>Vytvořeno</span><strong><%= order.created_at %></strong></div>
+  <% if (order.paid_at) { %><div class="row"><span>Zaplaceno</span><strong><%= order.paid_at %></strong></div><% } %>
+</div></div>
+
+<% if (order.status === 'pending') { %>
+  <div class="actions">
+    <form method="post" action="/admin/orders/<%= order.id %>/confirm">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <button class="btn" type="submit">✓ Potvrdit platbu a doručit kódy</button>
+    </form>
+    <form method="post" action="/admin/orders/<%= order.id %>/cancel" onsubmit="return confirm('Zrušit objednávku a vrátit kódy na sklad?');">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <button class="btn btn-danger" type="submit">Zrušit</button>
+    </form>
+  </div>
+  <p class="muted small">Potvrzením se rezervované kódy označí jako doručené a odešlou zákazníkovi e-mailem.</p>
+<% } else if (order.status === 'delivered') { %>
+  <div class="actions">
+    <form method="post" action="/admin/orders/<%= order.id %>/resend">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <button class="btn btn-sm" type="submit">Poslat e-mail znovu</button>
+    </form>
+  </div>
+<% } %>
+
+<h2>Kódy k objednávce</h2>
+<ul class="codes">
+  <% codes.forEach(function(c){ %><li><span class="status status-<%= c.status === 'delivered' ? 'delivered' : 'paid' %>"><%= c.status %></span> <%= c.code %></li><% }) %>
+  <% if (codes.length === 0) { %><li class="muted">Žádné kódy nejsou přiřazeny.</li><% } %>
+</ul>
+<%- include('../partials/footer') %>
